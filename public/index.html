@@ -86,6 +86,7 @@
             element.classList.add('active');
         }
 
+        // --- ЛОГИКА ПРОДАЖ ---
         function addItem() {
             const name = document.getElementById('item-name').value;
             const count = parseInt(document.getElementById('item-count').value);
@@ -97,6 +98,45 @@
             }
         }
 
+        function updateList() {
+            const list = document.getElementById('items-list');
+            list.innerHTML = '';
+            salesData.sort((a, b) => b.count - a.count);
+            let total = 0;
+            salesData.forEach((item, index) => {
+                total += item.count;
+                list.innerHTML += `
+                    <div class="report-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div><strong>${item.name}</strong><br><small>${item.count} шт.</small></div>
+                            <div>
+                                <button class="btn-icon" onclick="editItem(${index})"><i class="ri-pencil-line"></i></button>
+                                <button class="btn-icon delete" onclick="deleteItem(${index})"><i class="ri-delete-bin-line"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('total-sales').innerText = total;
+            document.getElementById('top-item').innerText = salesData.length > 0 ? salesData[0].name : '-';
+        }
+
+        function deleteItem(index) {
+            if(confirm('Удалить эту запись?')) {
+                salesData.splice(index, 1);
+                updateList();
+            }
+        }
+
+        function editItem(index) {
+            const newName = prompt('Изменить название:', salesData[index].name);
+            const newCount = prompt('Изменить количество:', salesData[index].count);
+            if (newName && newCount) {
+                salesData[index] = { name: newName, count: parseInt(newCount) };
+                updateList();
+            }
+        }
+
+        // --- ЛОГИКА СКЛАДА ---
         function addToStock() {
             const name = document.getElementById('stock-name').value;
             const count = document.getElementById('stock-count').value;
@@ -110,22 +150,6 @@
                 document.getElementById('stock-name').value = '';
                 document.getElementById('stock-count').value = '';
             }
-        }
-
-        function updateList() {
-            const list = document.getElementById('items-list');
-            list.innerHTML = '';
-            salesData.sort((a, b) => b.count - a.count);
-            let total = 0;
-            salesData.forEach(item => {
-                total += item.count;
-                list.innerHTML += `<div class="report-card">
-                    <div style="display: flex; justify-content: space-between;">
-                        <strong>${item.name}</strong><span>${item.count} шт.</span>
-                    </div></div>`;
-            });
-            document.getElementById('total-sales').innerText = total;
-            document.getElementById('top-item').innerText = salesData.length > 0 ? salesData[0].name : '-';
         }
     </script>
 </body>

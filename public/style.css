@@ -55,7 +55,7 @@ input:focus {
     border-color: #3390ec;
 }
 
-/* Кнопка */
+/* Кнопки */
 .btn-add {
     background: #3390ec;
     color: white;
@@ -70,6 +70,18 @@ input:focus {
 }
 
 .btn-add:active { background-color: #2a7abe; }
+
+.btn-icon {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 5px;
+    color: #888;
+    margin-left: 5px;
+}
+
+.btn-icon.delete { color: #ff4d4f; }
 
 /* Профиль и статистика */
 .profile-card {
@@ -121,7 +133,7 @@ input:focus {
     justify-content: center;
     color: #888;
     cursor: pointer;
-    width: 25%; /* Теперь 25%, так как иконок 4 */
+    width: 25%;
     height: 100%;
     transition: all 0.3s ease;
 }
@@ -140,4 +152,6 @@ input:focus {
     .nav-item { color: #6c7883; }
     .nav-item.active { color: #66b2ff; }
     input { background: #0f1519; border-color: #2b3a4a; color: white; }
+    .btn-icon { color: #a9b3c1; }
+    .btn-icon.delete { color: #ff7875; }
 }
