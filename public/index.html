@@ -3,39 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Учет продаж Дордой</title>
+    <title>Учет Дордой</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Страница: Главная -->
+    <!-- Главная -->
     <div id="page-home" class="page">
         <h1>Дордой Учет</h1>
         <div class="report-card">
             <h3>Добро пожаловать!</h3>
-            <p>Ведите учет продаж и отслеживайте хиты продаж в реальном времени.</p>
+            <p>Управляйте продажами и складом в одном приложении.</p>
         </div>
     </div>
 
-    <!-- Страница: Отчеты (Продажи) -->
+    <!-- Отчеты (Продажи) -->
     <div id="page-reports" class="page" style="display: none;">
         <h1>Учет продаж</h1>
-        
-        <!-- Форма добавления -->
         <div class="report-card">
             <input type="text" id="item-name" placeholder="Название товара">
             <input type="number" id="item-count" placeholder="Кол-во продаж">
             <button class="btn-add" onclick="addItem()">Добавить продажу</button>
         </div>
-
-        <!-- Список товаров (хит-парад) -->
-        <div id="items-list">
-            <!-- Сюда JS будет динамически добавлять карточки -->
-        </div>
+        <div id="items-list"></div>
     </div>
 
-    <!-- Страница: Профиль -->
+    <!-- Склад -->
+    <div id="page-stock" class="page" style="display: none;">
+        <h1>Склад</h1>
+        <div class="report-card">
+            <input type="text" id="stock-name" placeholder="Название товара">
+            <input type="number" id="stock-count" placeholder="Количество на складе">
+            <button class="btn-add" onclick="addToStock()">Добавить на склад</button>
+        </div>
+        <div id="stock-list"></div>
+    </div>
+
+    <!-- Профиль -->
     <div id="page-profile" class="page" style="display: none;">
         <h1>Профиль</h1>
         <div class="profile-card">
@@ -55,17 +60,12 @@
         </div>
     </div>
 
-    <!-- Нижняя навигация -->
+    <!-- Навигация -->
     <div class="navbar">
-        <div class="nav-item active" onclick="showPage('home', this)">
-            <i class="ri-home-5-line"></i><span>Главная</span>
-        </div>
-        <div class="nav-item" onclick="showPage('reports', this)">
-            <i class="ri-file-list-3-line"></i><span>Отчеты</span>
-        </div>
-        <div class="nav-item" onclick="showPage('profile', this)">
-            <i class="ri-user-3-line"></i><span>Профиль</span>
-        </div>
+        <div class="nav-item active" onclick="showPage('home', this)"><i class="ri-home-5-line"></i><span>Главная</span></div>
+        <div class="nav-item" onclick="showPage('reports', this)"><i class="ri-file-list-3-line"></i><span>Отчеты</span></div>
+        <div class="nav-item" onclick="showPage('stock', this)"><i class="ri-archive-line"></i><span>Склад</span></div>
+        <div class="nav-item" onclick="showPage('profile', this)"><i class="ri-user-3-line"></i><span>Профиль</span></div>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -74,14 +74,11 @@
         tg.ready();
         tg.expand();
 
-        // Данные
-        let salesData = [];
-
-        // Имя из Telegram
         const user = tg.initDataUnsafe.user;
         if (user) document.getElementById('user-name').innerText = user.first_name;
 
-        // Переключение страниц
+        let salesData = [];
+
         function showPage(pageId, element) {
             document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
             document.getElementById('page-' + pageId).style.display = 'block';
@@ -89,11 +86,9 @@
             element.classList.add('active');
         }
 
-        // Добавление товара
         function addItem() {
             const name = document.getElementById('item-name').value;
             const count = parseInt(document.getElementById('item-count').value);
-            
             if (name && count) {
                 salesData.push({ name, count });
                 updateList();
@@ -102,26 +97,33 @@
             }
         }
 
-        // Обновление интерфейса
+        function addToStock() {
+            const name = document.getElementById('stock-name').value;
+            const count = document.getElementById('stock-count').value;
+            if (name && count) {
+                document.getElementById('stock-list').innerHTML += `
+                    <div class="report-card">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong>${name}</strong><span>${count} шт.</span>
+                        </div>
+                    </div>`;
+                document.getElementById('stock-name').value = '';
+                document.getElementById('stock-count').value = '';
+            }
+        }
+
         function updateList() {
             const list = document.getElementById('items-list');
             list.innerHTML = '';
             salesData.sort((a, b) => b.count - a.count);
-            
             let total = 0;
             salesData.forEach(item => {
                 total += item.count;
-                list.innerHTML += `
-                    <div class="report-card">
-                        <div style="display: flex; justify-content: space-between;">
-                            <strong>${item.name}</strong>
-                            <span>${item.count} шт.</span>
-                        </div>
-                    </div>
-                `;
+                list.innerHTML += `<div class="report-card">
+                    <div style="display: flex; justify-content: space-between;">
+                        <strong>${item.name}</strong><span>${item.count} шт.</span>
+                    </div></div>`;
             });
-
-            // Обновление статистики профиля
             document.getElementById('total-sales').innerText = total;
             document.getElementById('top-item').innerText = salesData.length > 0 ? salesData[0].name : '-';
         }

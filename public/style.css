@@ -121,13 +121,13 @@ input:focus {
     justify-content: center;
     color: #888;
     cursor: pointer;
-    width: 33.33%;
+    width: 25%; /* Теперь 25%, так как иконок 4 */
     height: 100%;
     transition: all 0.3s ease;
 }
 
 .nav-item i { font-size: 1.5rem; margin-bottom: 2px; }
-.nav-item span { font-size: 0.75rem; font-weight: 600; }
+.nav-item span { font-size: 0.70rem; font-weight: 600; }
 .nav-item.active { color: #3390ec; }
 
 /* Темная тема */
