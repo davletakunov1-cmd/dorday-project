@@ -1,104 +1,121 @@
 /* public/style.css */
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f7f8fa;
-    margin: 0;
-    padding: 0;
-    color: #333;
+/* Базовые настройки */
+:root {
+    --primary: #3390ec;
+    --bg-color: #f7f8fa;
+    --card-bg: #ffffff;
+    --text-main: #1a1a1a;
+    --text-muted: #666;
+    --danger: #ff4d4f;
+    --border: #e0e0e0;
 }
 
-.container {
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 0;
+    padding-bottom: 80px;
+    color: var(--text-main);
+}
+
+#app {
     padding: 20px;
     max-width: 500px;
     margin: 0 auto;
 }
 
-h1 {
-    text-align: center;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-}
+h1 { font-size: 1.5rem; text-align: center; margin-bottom: 20px; }
 
 /* Карточки */
 .report-card {
-    background: #ffffff;
+    background: var(--card-bg);
     padding: 16px;
     margin-bottom: 12px;
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.item-row {
+.row {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.item-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.item-info span {
-    color: #666;
-    font-size: 0.9rem;
-    margin-top: 4px;
-}
-
-/* Поля ввода */
+/* Формы */
 input {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     margin-bottom: 10px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border);
     border-radius: 12px;
     box-sizing: border-box;
     font-size: 16px;
-}
-
-input:focus {
     outline: none;
-    border-color: #3390ec;
 }
 
-/* Кнопки */
+input:focus { border-color: var(--primary); }
+
 .btn-add {
     width: 100%;
     padding: 14px;
-    background: #3390ec;
+    background: var(--primary);
     color: white;
     border: none;
     border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
-    font-size: 1rem;
-}
-
-.btn-add:active {
-    background: #2a7abe;
 }
 
 .btn-icon {
     background: #fff0f0;
     border: none;
-    padding: 10px 14px;
-    border-radius: 12px;
-    color: #ff4d4f;
+    padding: 10px;
+    border-radius: 10px;
+    color: var(--danger);
     cursor: pointer;
     font-size: 1.2rem;
     transition: background 0.2s;
 }
 
-.btn-icon:hover {
-    background: #ffebeb;
+.btn-icon:hover { background: #ffebeb; }
+
+/* Навигация */
+.navbar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 65px;
+    background: var(--card-bg);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
 }
 
-/* Темная тема (автоматическая) */
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    color: #888;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.nav-item.active { color: var(--primary); }
+.nav-item i { font-size: 1.5rem; margin-bottom: 2px; }
+
+/* Темная тема */
 @media (prefers-color-scheme: dark) {
-    body { background-color: #0f1519; color: #fff; }
-    .report-card { background: #18222d; }
+    :root {
+        --bg-color: #0f1519;
+        --card-bg: #18222d;
+        --text-main: #ffffff;
+        --text-muted: #a9b3c1;
+    }
     input { background: #0f1519; border-color: #2b3a4a; color: white; }
-    .item-info span { color: #a9b3c1; }
-    h1 { color: #fff; }
+    .btn-icon { background: #2d1e1e; }
+    .btn-icon:hover { background: #4a2c2c; }
 }

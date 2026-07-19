@@ -9,83 +9,110 @@
 </head>
 <body>
 
-    <!-- Страницы -->
-    <div id="page-home" class="page"><h1>Главная</h1><div class="report-card">Добро пожаловать в систему учета.</div></div>
-    
-    <div id="page-reports" class="page" style="display: none;">
-        <h1>Продажи</h1>
-        <div class="report-card">
-            <input type="text" id="item-name" placeholder="Товар">
-            <input type="number" id="item-count" placeholder="Кол-во">
-            <button class="btn-add" onclick="addItem()">Добавить</button>
-        </div>
-        <div id="items-list"></div>
-    </div>
+    <main id="app">
+        <!-- Главная -->
+        <section id="page-home" class="page">
+            <h1>Дордой Учет</h1>
+            <div class="report-card">
+                <h3>Добро пожаловать!</h3>
+                <p>Ваша система учета остатков и продаж.</p>
+            </div>
+        </section>
+        
+        <!-- Продажи -->
+        <section id="page-reports" class="page" style="display: none;">
+            <h1>Продажи</h1>
+            <div class="report-card">
+                <input type="text" id="sales-name" placeholder="Название товара">
+                <input type="number" id="sales-count" placeholder="Количество">
+                <button class="btn-add" onclick="App.add('sales')">Добавить продажу</button>
+            </div>
+            <div id="sales-list" class="list-container"></div>
+        </section>
 
-    <div id="page-stock" class="page" style="display: none;">
-        <h1>Склад</h1>
-        <div class="report-card">
-            <input type="text" id="stock-name" placeholder="Товар">
-            <input type="number" id="stock-count" placeholder="Кол-во">
-            <button class="btn-add" onclick="addToStock()">Добавить</button>
-        </div>
-        <div id="stock-list"></div>
-    </div>
+        <!-- Склад -->
+        <section id="page-stock" class="page" style="display: none;">
+            <h1>Склад</h1>
+            <div class="report-card">
+                <input type="text" id="stock-name" placeholder="Название товара">
+                <input type="number" id="stock-count" placeholder="Количество">
+                <button class="btn-add" onclick="App.add('stock')">Добавить на склад</button>
+            </div>
+            <div id="stock-list" class="list-container"></div>
+        </section>
+    </main>
 
-    <div id="page-profile" class="page" style="display: none;"><h1>Профиль</h1><div class="profile-card"><h2 id="user-name">Пользователь</h2></div></div>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-item active" onclick="App.navigate('home', this)"><i class="ri-home-5-line"></i><span>Главная</span></div>
+        <div class="nav-item" onclick="App.navigate('reports', this)"><i class="ri-file-list-3-line"></i><span>Продажи</span></div>
+        <div class="nav-item" onclick="App.navigate('stock', this)"><i class="ri-archive-line"></i><span>Склад</span></div>
+    </nav>
 
-    <!-- Меню -->
-    <div class="navbar">
-        <div class="nav-item" onclick="showPage('home', this)"><span>Главная</span></div>
-        <div class="nav-item" onclick="showPage('reports', this)"><span>Продажи</span></div>
-        <div class="nav-item" onclick="showPage('stock', this)"><span>Склад</span></div>
-        <div class="nav-item" onclick="showPage('profile', this)"><span>Профиль</span></div>
-    </div>
-
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Списки товаров
-        let sales = [];
-        let stocks = [];
+        const App = {
+            // Инициализация данных из localStorage
+            data: {
+                sales: JSON.parse(localStorage.getItem('sales')) || [],
+                stock: JSON.parse(localStorage.getItem('stock')) || []
+            },
 
-        function showPage(id, el) {
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-            document.getElementById('page-' + id).style.display = 'block';
-        }
+            navigate(id, el) {
+                document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+                document.getElementById(`page-${id}`).style.display = 'block';
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+            },
 
-        function addItem() {
-            let n = document.getElementById('item-name').value;
-            let c = document.getElementById('item-count').value;
-            if (n && c) {
-                sales.push({n, c});
-                render();
+            save() {
+                localStorage.setItem('sales', JSON.stringify(this.data.sales));
+                localStorage.setItem('stock', JSON.stringify(this.data.stock));
+            },
+
+            add(type) {
+                const nameInput = document.getElementById(`${type}-name`);
+                const countInput = document.getElementById(`${type}-count`);
+                
+                if (!nameInput.value || !countInput.value) return;
+                
+                this.data[type].push({ 
+                    id: Date.now(), 
+                    name: nameInput.value, 
+                    count: countInput.value 
+                });
+                
+                nameInput.value = '';
+                countInput.value = '';
+                this.save();
+                this.render(type);
+            },
+
+            remove(type, id) {
+                this.data[type] = this.data[type].filter(item => item.id !== id);
+                this.save();
+                this.render(type);
+            },
+
+            render(type) {
+                const container = document.getElementById(`${type}-list`);
+                container.innerHTML = this.data[type].map(item => `
+                    <div class="report-card row">
+                        <div><strong>${item.name}</strong><br><small>${item.count} шт.</small></div>
+                        <button class="btn-icon" onclick="App.remove('${type}', ${item.id})">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
+                    </div>
+                `).join('');
+            },
+
+            init() {
+                this.render('sales');
+                this.render('stock');
             }
-        }
+        };
 
-        function addToStock() {
-            let n = document.getElementById('stock-name').value;
-            let c = document.getElementById('stock-count').value;
-            if (n && c) {
-                stocks.push({n, c});
-                render();
-            }
-        }
-
-        function render() {
-            let list = document.getElementById('items-list');
-            list.innerHTML = '';
-            sales.forEach((item, i) => {
-                list.innerHTML += `<div class="report-card">${item.n}: ${item.c} шт. 
-                <button onclick="sales.splice(${i},1); render()">Удалить</button></div>`;
-            });
-
-            let sList = document.getElementById('stock-list');
-            sList.innerHTML = '';
-            stocks.forEach((item, i) => {
-                sList.innerHTML += `<div class="report-card">${item.n}: ${item.c} шт. 
-                <button onclick="stocks.splice(${i},1); render()">Удалить</button></div>`;
-            });
-        }
+        // Запуск приложения
+        App.init();
     </script>
 </body>
 </html>
