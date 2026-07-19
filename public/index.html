@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Привет!</h1>
+    <p>Это твой первый Mini App.</p>
+    <button id="mainButton">Закрыть</button>
+    
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        document.getElementById('mainButton').addEventListener('click', () => {
+            tg.close();
+        });
+    </script>
+</body>
+</html>
