@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Учет отчетов</title>
-    <!-- Подключение внешнего файла стилей -->
+    <!-- Библиотека иконок -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Подключение файла стилей -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,33 +17,40 @@
     <div id="reports-container">
         <div class="report-card">
             <h3>Отчет №1</h3>
-            <p>Дата: 20.07.2026</p>
-            <p>Статус: Выполнено</p>
+            <p>Дата: 20.07.2026 | Статус: Выполнено</p>
         </div>
 
         <div class="report-card">
             <h3>Отчет №2</h3>
-            <p>Дата: 19.07.2026</p>
-            <p>Статус: В обработке</p>
+            <p>Дата: 19.07.2026 | Статус: В обработке</p>
         </div>
     </div>
 
-    <!-- Кнопка добавления -->
-    <button class="btn-add" onclick="alert('Функция добавления отчета будет готова скоро!')">
+    <!-- Кнопка -->
+    <button class="btn-add" onclick="alert('Скоро...')">
         Добавить отчет
     </button>
 
     <!-- Нижняя навигация -->
     <div class="navbar">
-        <div class="nav-item">Главная</div>
-        <div class="nav-item">Отчеты</div>
-        <div class="nav-item">Профиль</div>
+        <div class="nav-item active">
+            <i class="ri-home-5-line"></i>
+            <span>Главная</span>
+        </div>
+        <div class="nav-item">
+            <i class="ri-file-list-3-line"></i>
+            <span>Отчеты</span>
+        </div>
+        <div class="nav-item">
+            <i class="ri-user-3-line"></i>
+            <span>Профиль</span>
+        </div>
     </div>
 
-    <!-- Подключаем Telegram Web App SDK -->
+    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Инициализация Web App
+        // Инициализация
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
@@ -50,9 +59,8 @@
         const navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(item => {
             item.addEventListener('click', () => {
-                navItems.forEach(i => i.style.color = '#555'); // сбрасываем цвет всех
-                item.style.color = '#2481cc'; // подсвечиваем нажатый
-                console.log('Выбран раздел:', item.innerText);
+                navItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
             });
         });
     </script>

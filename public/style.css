@@ -7,13 +7,14 @@ body {
     padding: 16px;
     margin: 0;
     color: #333;
-    padding-bottom: 80px; /* Отступ снизу, чтобы контент не прятался за меню */
+    padding-bottom: 80px; /* Чтобы контент не перекрывался меню */
 }
 
 h1 {
     text-align: center;
     font-size: 1.5rem;
     color: #1a1a1a;
+    margin-bottom: 20px;
 }
 
 /* Карточки отчетов */
@@ -21,33 +22,40 @@ h1 {
     background: #ffffff;
     padding: 16px;
     margin-bottom: 12px;
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #e0e0e0;
 }
 
 .report-card h3 {
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .report-card p {
-    margin: 4px 0;
-    font-size: 0.9rem;
-    color: #666;
+    margin: 0;
+    font-size: 0.85rem;
+    color: #777;
 }
 
 /* Кнопка добавления */
 .btn-add {
-    background: #2481cc;
+    background: #3390ec;
     color: white;
     padding: 14px;
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     width: 100%;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 15px;
+    transition: background-color 0.2s;
+}
+
+.btn-add:active {
+    background-color: #2a7abe;
 }
 
 /* Нижняя навигация */
@@ -56,37 +64,58 @@ h1 {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 60px;
+    height: 65px;
     background-color: #ffffff;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-top: 1px solid #ccc;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
     z-index: 1000;
 }
 
 .nav-item {
-    font-size: 0.8rem;
-    color: #555;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #888;
     cursor: pointer;
-    font-weight: 500;
-    padding: 10px;
+    width: 33.33%;
+    height: 100%;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
-/* Адаптация под темную тему Telegram */
+.nav-item i {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+
+.nav-item span {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.nav-item.active {
+    color: #3390ec;
+}
+
+/* Адаптация под тему Telegram */
 @media (prefers-color-scheme: dark) {
-    body {
-        background-color: #17212b;
-        color: #f5f5f5;
+    body { 
+        background-color: #0f1519; 
+        color: #fff; 
     }
-    .report-card {
-        background: #242f3d;
+    h1 { color: #fff; }
+    .report-card { 
+        background-color: #18222d; 
+        border-color: transparent; 
     }
-    .navbar {
-        background-color: #17212b;
-        border-top: 1px solid #2b3a4a;
+    .report-card p { color: #a9b3c1; }
+    .navbar { 
+        background-color: #18222d; 
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.2); 
     }
-    .report-card h3 { color: #ffffff; }
-    .report-card p { color: #b1bad3; }
+    .nav-item { color: #6c7883; }
+    .nav-item.active { color: #66b2ff; }
 }
