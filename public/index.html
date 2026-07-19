@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Учет отчетов</title>
-    <!-- Подключаем внешний файл стилей -->
+    <!-- Подключение внешнего файла стилей -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -31,13 +31,30 @@
         Добавить отчет
     </button>
 
-    <!-- Подключаем Telegram Web App SDK, чтобы сайт знал, что он внутри Telegram -->
+    <!-- Нижняя навигация -->
+    <div class="navbar">
+        <div class="nav-item">Главная</div>
+        <div class="nav-item">Отчеты</div>
+        <div class="nav-item">Профиль</div>
+    </div>
+
+    <!-- Подключаем Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         // Инициализация Web App
         const tg = window.Telegram.WebApp;
         tg.ready();
-        tg.expand(); // Разворачиваем на весь экран
+        tg.expand();
+
+        // Логика переключения активного пункта меню
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(i => i.style.color = '#555'); // сбрасываем цвет всех
+                item.style.color = '#2481cc'; // подсвечиваем нажатый
+                console.log('Выбран раздел:', item.innerText);
+            });
+        });
     </script>
 </body>
 </html>
