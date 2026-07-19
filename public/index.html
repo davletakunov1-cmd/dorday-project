@@ -3,62 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Учет отчетов</title>
+    <title>Учет продаж Дордой</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Главная страница -->
+    <!-- Страница: Главная -->
     <div id="page-home" class="page">
-        <h1>Главная</h1>
+        <h1>Дордой Учет</h1>
         <div class="report-card">
             <h3>Добро пожаловать!</h3>
-            <p>Здесь будут отображаться оперативные данные и уведомления.</p>
+            <p>Ведите учет продаж и отслеживайте хиты продаж в реальном времени.</p>
         </div>
     </div>
 
-    <!-- Страница Отчетов -->
+    <!-- Страница: Отчеты (Продажи) -->
     <div id="page-reports" class="page" style="display: none;">
-        <h1>Мои отчеты</h1>
-        <div id="reports-container">
-            <div class="report-card">
-                <h3>Отчет №1</h3>
-                <p>Дата: 20.07.2026 | Статус: Выполнено</p>
-            </div>
+        <h1>Учет продаж</h1>
+        
+        <!-- Форма добавления -->
+        <div class="report-card">
+            <input type="text" id="item-name" placeholder="Название товара">
+            <input type="number" id="item-count" placeholder="Кол-во продаж">
+            <button class="btn-add" onclick="addItem()">Добавить продажу</button>
         </div>
-        <button class="btn-add" onclick="alert('Добавление отчета...')">Добавить отчет</button>
+
+        <!-- Список товаров (хит-парад) -->
+        <div id="items-list">
+            <!-- Сюда JS будет динамически добавлять карточки -->
+        </div>
     </div>
 
-    <!-- Страница Профиля -->
+    <!-- Страница: Профиль -->
     <div id="page-profile" class="page" style="display: none;">
         <h1>Профиль</h1>
         <div class="profile-card">
             <div class="avatar"><i class="ri-user-line"></i></div>
             <h2 id="user-name">Загрузка...</h2>
-            <p>Роль: Активный участник</p>
+            <p>Роль: Продавец Дордой</p>
         </div>
         <div class="stats-grid">
             <div class="stat-item">
-                <p>Отчетов</p>
-                <h3>12</h3>
+                <p>Всего продаж</p>
+                <h3 id="total-sales">0</h3>
             </div>
             <div class="stat-item">
-                <p>Эффективность</p>
-                <h3>95%</h3>
+                <p>Хит продаж</p>
+                <h3 id="top-item">-</h3>
             </div>
         </div>
     </div>
 
     <!-- Нижняя навигация -->
     <div class="navbar">
-        <div class="nav-item active" onclick="showPage('home')">
+        <div class="nav-item active" onclick="showPage('home', this)">
             <i class="ri-home-5-line"></i><span>Главная</span>
         </div>
-        <div class="nav-item" onclick="showPage('reports')">
+        <div class="nav-item" onclick="showPage('reports', this)">
             <i class="ri-file-list-3-line"></i><span>Отчеты</span>
         </div>
-        <div class="nav-item" onclick="showPage('profile')">
+        <div class="nav-item" onclick="showPage('profile', this)">
             <i class="ri-user-3-line"></i><span>Профиль</span>
         </div>
     </div>
@@ -69,19 +74,56 @@
         tg.ready();
         tg.expand();
 
-        // Подтянем имя из Telegram
-        const user = tg.initDataUnsafe.user;
-        if (user) {
-            document.getElementById('user-name').innerText = user.first_name;
-        }
+        // Данные
+        let salesData = [];
 
-        // Функция переключения страниц
-        function showPage(pageId) {
+        // Имя из Telegram
+        const user = tg.initDataUnsafe.user;
+        if (user) document.getElementById('user-name').innerText = user.first_name;
+
+        // Переключение страниц
+        function showPage(pageId, element) {
             document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
             document.getElementById('page-' + pageId).style.display = 'block';
-            
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            element.classList.add('active');
+        }
+
+        // Добавление товара
+        function addItem() {
+            const name = document.getElementById('item-name').value;
+            const count = parseInt(document.getElementById('item-count').value);
+            
+            if (name && count) {
+                salesData.push({ name, count });
+                updateList();
+                document.getElementById('item-name').value = '';
+                document.getElementById('item-count').value = '';
+            }
+        }
+
+        // Обновление интерфейса
+        function updateList() {
+            const list = document.getElementById('items-list');
+            list.innerHTML = '';
+            salesData.sort((a, b) => b.count - a.count);
+            
+            let total = 0;
+            salesData.forEach(item => {
+                total += item.count;
+                list.innerHTML += `
+                    <div class="report-card">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong>${item.name}</strong>
+                            <span>${item.count} шт.</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Обновление статистики профиля
+            document.getElementById('total-sales').innerText = total;
+            document.getElementById('top-item').innerText = salesData.length > 0 ? salesData[0].name : '-';
         }
     </script>
 </body>
