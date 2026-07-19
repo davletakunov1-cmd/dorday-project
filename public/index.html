@@ -14,7 +14,7 @@
         <h1>Дордой Учет</h1>
         <div class="report-card">
             <h3>Добро пожаловать!</h3>
-            <p>Управляйте продажами и складом в одном приложении.</p>
+            <p>Ваша система учета продаж и складских остатков.</p>
         </div>
     </div>
 
@@ -74,57 +74,89 @@
         tg.ready();
         tg.expand();
 
+        // Данные из памяти или пустые массивы
+        let salesData = JSON.parse(localStorage.getItem('sales')) || [];
+        let stockData = JSON.parse(localStorage.getItem('stock')) || [];
+
         const user = tg.initDataUnsafe.user;
         if (user) document.getElementById('user-name').innerText = user.first_name;
 
-        let salesData = [];
-
+        // Переключение страниц
         function showPage(pageId, element) {
             document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
             document.getElementById('page-' + pageId).style.display = 'block';
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             element.classList.add('active');
+            renderLists();
         }
 
-        // --- ЛОГИКА ПРОДАЖ ---
-        function addItem() {
-            const name = document.getElementById('item-name').value;
-            const count = parseInt(document.getElementById('item-count').value);
-            if (name && count) {
-                salesData.push({ name, count });
-                updateList();
-                document.getElementById('item-name').value = '';
-                document.getElementById('item-count').value = '';
-            }
+        // Сохранение и обновление интерфейса
+        function saveAndRender() {
+            localStorage.setItem('sales', JSON.stringify(salesData));
+            localStorage.setItem('stock', JSON.stringify(stockData));
+            renderLists();
         }
 
-        function updateList() {
+        function renderLists() {
+            // Рендер Продаж
             const list = document.getElementById('items-list');
             list.innerHTML = '';
             salesData.sort((a, b) => b.count - a.count);
             let total = 0;
             salesData.forEach((item, index) => {
                 total += item.count;
-                list.innerHTML += `
-                    <div class="report-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div><strong>${item.name}</strong><br><small>${item.count} шт.</small></div>
-                            <div>
-                                <button class="btn-icon" onclick="editItem(${index})"><i class="ri-pencil-line"></i></button>
-                                <button class="btn-icon delete" onclick="deleteItem(${index})"><i class="ri-delete-bin-line"></i></button>
-                            </div>
+                list.innerHTML += `<div class="report-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div><strong>${item.name}</strong><br><small>${item.count} шт.</small></div>
+                        <div>
+                            <button class="btn-icon" onclick="editItem(${index})"><i class="ri-pencil-line"></i></button>
+                            <button class="btn-icon delete" onclick="deleteItem(${index})"><i class="ri-delete-bin-line"></i></button>
                         </div>
-                    </div>`;
+                    </div></div>`;
             });
             document.getElementById('total-sales').innerText = total;
             document.getElementById('top-item').innerText = salesData.length > 0 ? salesData[0].name : '-';
+
+            // Рендер Склада
+            const stockList = document.getElementById('stock-list');
+            stockList.innerHTML = '';
+            stockData.forEach((item, index) => {
+                stockList.innerHTML += `<div class="report-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong>${item.name}</strong><span>${item.count} шт.</span>
+                        <button class="btn-icon delete" onclick="deleteStock(${index})"><i class="ri-delete-bin-line"></i></button>
+                    </div></div>`;
+            });
+        }
+
+        function addItem() {
+            const name = document.getElementById('item-name').value;
+            const count = parseInt(document.getElementById('item-count').value);
+            if (name && count) {
+                salesData.push({ name, count });
+                saveAndRender();
+                document.getElementById('item-name').value = '';
+                document.getElementById('item-count').value = '';
+            }
+        }
+
+        function addToStock() {
+            const name = document.getElementById('stock-name').value;
+            const count = document.getElementById('stock-count').value;
+            if (name && count) {
+                stockData.push({ name, count });
+                saveAndRender();
+                document.getElementById('stock-name').value = '';
+                document.getElementById('stock-count').value = '';
+            }
         }
 
         function deleteItem(index) {
-            if(confirm('Удалить эту запись?')) {
-                salesData.splice(index, 1);
-                updateList();
-            }
+            if(confirm('Удалить продажу?')) { salesData.splice(index, 1); saveAndRender(); }
+        }
+
+        function deleteStock(index) {
+            if(confirm('Удалить со склада?')) { stockData.splice(index, 1); saveAndRender(); }
         }
 
         function editItem(index) {
@@ -132,25 +164,12 @@
             const newCount = prompt('Изменить количество:', salesData[index].count);
             if (newName && newCount) {
                 salesData[index] = { name: newName, count: parseInt(newCount) };
-                updateList();
+                saveAndRender();
             }
         }
 
-        // --- ЛОГИКА СКЛАДА ---
-        function addToStock() {
-            const name = document.getElementById('stock-name').value;
-            const count = document.getElementById('stock-count').value;
-            if (name && count) {
-                document.getElementById('stock-list').innerHTML += `
-                    <div class="report-card">
-                        <div style="display: flex; justify-content: space-between;">
-                            <strong>${name}</strong><span>${count} шт.</span>
-                        </div>
-                    </div>`;
-                document.getElementById('stock-name').value = '';
-                document.getElementById('stock-count').value = '';
-            }
-        }
+        // Первичная отрисовка
+        renderLists();
     </script>
 </body>
 </html>
